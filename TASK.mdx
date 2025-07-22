@@ -1,0 +1,31 @@
+Smak CLI is a command line tool for easier git cli interaction.
+
+## Command list
+
+# `smak b`
+- user can navigate through branches using arrow keys
+- user can select a branch using enter
+- user can select multiple branches using `d` button. selected branch names should be displayed with red color. after if user clicks `enter` button,
+cli should ask for branch deletion confirmation (Y/N). If user clicks `Y` button, cli should delete selected branches. If user clicks `N` button,
+cli should not delete any branches and leave the user in the same screen with selected branches for deletion.
+- branches should be sorted by last commit date
+- branch item in list should contain branch name, last commit date and last commit message
+- branch item in list should contain number of commits in origin that are not in the local repository
+- branch item in list should contain number of commits in local repository that are not in the origin
+
+# `smak help`
+- user can see list of commands with descriptions
+
+# `smak c`
+- user can see list of commits in the current branch
+- user can navigate through commits using arrow keys
+- user can select a commit using enter, after that full commit message with full hash should be displayed in the terminal at the top with proper formatting + git diff
+should be displayed below the commit message, by which user can navigate through diffs using arrow keys. If user clicks `escape` button return to the previous screen.
+
+## Addition requirements
+- use bubletea for terminal ui
+- use cobra for command line parsing
+- each command that supports additional manipulation, for example `escape` to return to the previous screen, or `d` to select for deletion, should have
+a help panel on the bottom of the screen with short description.
+- i want be able to install this cli as a global command, so i can use it from any directory, add ability to it and guide. it should follow standards of other cli tools written
+in Go installation.
