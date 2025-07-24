@@ -9,7 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
-	
+
 	"github.com/nikitaNotFound/smak-cli/internal"
 )
 
@@ -22,16 +22,16 @@ var commitsCmd = &cobra.Command{
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
-		
+
 		commits, err := internal.GetCommits()
 		if err != nil {
 			fmt.Printf("Error getting commits: %v\n", err)
 			return
 		}
-		
+
 		model := newCommitModel(commits)
 		p := tea.NewProgram(model, tea.WithAltScreen())
-		
+
 		if _, err := p.Run(); err != nil {
 			log.Fatalf("Error running program: %v", err)
 		}
@@ -72,20 +72,20 @@ func newCommitModel(commits []internal.Commit) commitModel {
 	for i, commit := range commits {
 		items[i] = commitItem{commit: commit}
 	}
-	
+
 	delegate := list.NewDefaultDelegate()
 	delegate.Styles.SelectedTitle = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
 	delegate.Styles.SelectedDesc = lipgloss.NewStyle().Foreground(lipgloss.Color("243"))
-	
+
 	l := list.New(items, delegate, 0, 0)
 	l.Title = "Commits"
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.SetShowHelp(false)
-	
+
 	vp := viewport.New(0, 0)
 	vp.Style = lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
-	
+
 	return commitModel{
 		list:        l,
 		commits:     commits,
@@ -111,7 +111,7 @@ func (m commitModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.SetSize(msg.Width-h, msg.Height-v-helpHeight)
 		}
 		return m, nil
-		
+
 	case tea.KeyMsg:
 		if m.showDiff {
 			switch msg.String() {
@@ -133,7 +133,7 @@ func (m commitModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 		}
-		
+
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
@@ -152,13 +152,13 @@ func (m commitModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	}
-	
+
 	if !m.showDiff {
 		var cmd tea.Cmd
 		m.list, cmd = m.list.Update(msg)
 		return m, cmd
 	}
-	
+
 	return m, nil
 }
 
@@ -169,25 +169,25 @@ func (m commitModel) View() string {
 			Foreground(lipgloss.Color("170")).
 			Bold(true).
 			Render(fmt.Sprintf("Commit: %s", commit.Hash))
-		
+
 		author := lipgloss.NewStyle().
 			Foreground(lipgloss.Color("243")).
 			Render(fmt.Sprintf("Author: %s", commit.Author))
-		
+
 		date := lipgloss.NewStyle().
 			Foreground(lipgloss.Color("243")).
 			Render(fmt.Sprintf("Date: %s", commit.Date.Format("2006-01-02 15:04:05")))
-		
+
 		message := lipgloss.NewStyle().
 			Foreground(lipgloss.Color("255")).
 			Render(fmt.Sprintf("Message: %s", commit.Message))
-		
+
 		help := lipgloss.NewStyle().
 			Foreground(lipgloss.Color("241")).
 			Render("↑↓/j k: scroll • pgup/pgdown: page • esc: back • q: quit")
-		
+
 		headerContent := lipgloss.JoinVertical(lipgloss.Left, header, author, date, message, "")
-		
+
 		return lipgloss.JoinVertical(lipgloss.Left,
 			headerContent,
 			m.viewport.View(),
@@ -195,15 +195,15 @@ func (m commitModel) View() string {
 			help,
 		)
 	}
-	
+
 	view := m.list.View()
-	
+
 	if m.helpVisible {
 		helpStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
 		help := helpStyle.Render("↑↓: navigate • enter: view commit diff • q: quit")
 		view += "\n\n" + help
 	}
-	
+
 	return view
 }
 
