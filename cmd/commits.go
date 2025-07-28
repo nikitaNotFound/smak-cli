@@ -49,12 +49,18 @@ var commitAmendCmd = &cobra.Command{
 			return
 		}
 
-		if err := internal.StageAllAndAmend(); err != nil {
+		push, _ := cmd.Flags().GetBool("push")
+
+		if err := internal.StageAllAndAmend(push); err != nil {
 			fmt.Printf("Error amending commit: %v\n", err)
 			return
 		}
 
-		fmt.Println("Successfully staged all changes and amended to latest commit")
+		if push {
+			fmt.Println("Successfully staged all changes, amended to latest commit, and pushed")
+		} else {
+			fmt.Println("Successfully staged all changes and amended to latest commit")
+		}
 	},
 }
 
@@ -166,7 +172,7 @@ func (m commitModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					log.Printf("Error getting diff: %v", err)
 					return m, nil
 				}
-				
+
 				// Apply color highlighting to diff content
 				coloredDiff := m.colorDiff(diff)
 				m.currentDiff = coloredDiff
@@ -223,7 +229,7 @@ func (m commitModel) View() string {
 			Render("↑↓/j k: scroll • pgup/pgdown: page • esc: back • q: quit")
 
 		headerContent := lipgloss.JoinVertical(lipgloss.Left, header, author, date, message, "")
-		
+
 		viewportContent := m.viewport.View()
 
 		return lipgloss.JoinVertical(lipgloss.Left,
@@ -248,13 +254,13 @@ func (m commitModel) View() string {
 func (m commitModel) colorDiff(diff string) string {
 	lines := strings.Split(diff, "\n")
 	var coloredLines []string
-	
+
 	for _, line := range lines {
 		if len(line) == 0 {
 			coloredLines = append(coloredLines, line)
 			continue
 		}
-		
+
 		switch line[0] {
 		case '+':
 			// Green background for added lines
@@ -291,11 +297,12 @@ func (m commitModel) colorDiff(diff string) string {
 			coloredLines = append(coloredLines, line)
 		}
 	}
-	
+
 	return strings.Join(coloredLines, "\n")
 }
 
 func init() {
+	commitAmendCmd.Flags().BoolP("push", "p", false, "Push the amended commit to origin with force")
 	commitsCmd.AddCommand(commitAmendCmd)
 	rootCmd.AddCommand(commitsCmd)
 }

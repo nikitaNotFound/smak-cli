@@ -94,10 +94,10 @@ func (d customDelegate) Render(w io.Writer, m list.Model, index int, listItem li
 	}
 
 	isCurrentlyNavigated := index == m.Index()
-	
+
 	// Determine styling based on item state
 	var titleStyle, descStyle lipgloss.Style
-	
+
 	if item.isMarkedDelete {
 		// Red for deletion
 		if isCurrentlyNavigated {
@@ -143,7 +143,7 @@ func newBranchModel(branches []internal.Branch) branchModel {
 	}
 
 	selectedIndexes := make(map[int]bool)
-	
+
 	// Create model first so we can point to its fields
 	m := branchModel{
 		branches:        branches,
@@ -155,7 +155,7 @@ func newBranchModel(branches []internal.Branch) branchModel {
 		showMergeResult: false,
 		mergeResult:     nil,
 	}
-	
+
 	// Create delegate
 	delegate := customDelegate{
 		DefaultDelegate: list.NewDefaultDelegate(),
@@ -169,7 +169,6 @@ func newBranchModel(branches []internal.Branch) branchModel {
 	l.SetShowHelp(false)
 
 	m.list = l
-
 
 	return m
 }

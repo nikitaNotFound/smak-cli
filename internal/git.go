@@ -226,7 +226,7 @@ func AbortMerge() error {
 	return cmd.Run()
 }
 
-func StageAllAndAmend() error {
+func StageAllAndAmend(push bool) error {
 	// Stage all changes
 	addCmd := exec.Command("git", "add", "-A")
 	if err := addCmd.Run(); err != nil {
@@ -235,5 +235,17 @@ func StageAllAndAmend() error {
 
 	// Amend the commit with the same message
 	amendCmd := exec.Command("git", "commit", "--amend", "--no-edit")
-	return amendCmd.Run()
+	if err := amendCmd.Run(); err != nil {
+		return err
+	}
+
+	// Push if requested
+	if push {
+		pushCmd := exec.Command("git", "push", "origin", "HEAD", "-f")
+		if err := pushCmd.Run(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

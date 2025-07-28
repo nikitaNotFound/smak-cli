@@ -6,6 +6,7 @@ A command-line tool for easier git interaction with interactive interfaces.
 
 - **Interactive Branch Management** (`smak b`): Browse, select, and delete branches with an intuitive interface
 - **Commit Browser** (`smak c`): Navigate commits with full diff viewing
+- **Commit Amend** (`smak c am`): Stage all changes and amend to latest commit with optional push
 - **Git Repository Integration**: Works with any git repository
 
 ## Installation
@@ -48,6 +49,7 @@ Make sure you're in a git repository before using any commands.
 
 - `smak b` - Interactive branch browser and manager
 - `smak c` - Interactive commit browser
+- `smak c am` - Stage all changes and amend to latest commit
 - `smak help` - Show help information
 
 ### Branch Management (`smak b`)
@@ -66,6 +68,27 @@ Make sure you're in a git repository before using any commands.
   - `Page Up`/`Page Down` for faster navigation
   - `Escape` to return to commit list
 - Press `q` to quit
+
+### Commit Amend (`smak c am`)
+
+Quickly stage all unstaged changes and amend them to the latest commit with the same message.
+
+**Basic usage:**
+```bash
+smak c am
+```
+
+**With automatic push:**
+```bash
+smak c am -p
+# or
+smak c am --push
+```
+
+**Options:**
+- `-p, --push` - Push the amended commit to origin with force after amending
+
+This command is useful for quickly incorporating additional changes into your most recent commit without having to manually stage files and run git commands.
 
 ## Requirements
 
